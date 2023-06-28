@@ -1,6 +1,6 @@
 function vizTrack(view, content) {
-  mpTrack(view, content);
-  gaTrack('viz interaction hdx', 'switch viz', 'ukr data explorer', content);
+  // mpTrack(view, content);
+  // gaTrack('viz interaction hdx', 'switch viz', 'access dashboard', content);
 }
 
 function mpTrack(view, content) {
@@ -9,7 +9,7 @@ function mpTrack(view, content) {
     'page title': document.title,
     'embedded in': window.location.href,
     'action': 'switch viz',
-    'viz type': 'ukr data explorer',
+    'viz type': 'access dashboard',
     'current view': view,
     'content': content
   });

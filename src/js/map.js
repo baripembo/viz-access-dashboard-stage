@@ -1,13 +1,13 @@
-var map, mapFeatures, globalLayer, globalBoundaryLayer, subnationalLayer, subnationalBoundaryLayer, subnationalLabelLayer, tooltip;
+var map, mapFeatures, globalLayer, globalBoundaryLayer, subnationalLayer, subnationalBoundaryLayer, subnationalLabelLayer, subnationalMarkerLayer, tooltip;
 var adm0SourceLayer = 'wrl_polbnda_1m_ungis';
-var adm1SourceLayer = 'hornafrica_polbnda_int_uncs-9e96cy';
+var adm1SourceLayer = 'access_polbndl_int_uncs-cja3rr';
 var hoveredStateId = null;
 function initMap() {
   console.log('Loading map...')
   map = new mapboxgl.Map({
     container: 'global-map',
     style: 'mapbox://styles/humdata/cl3lpk27k001k15msafr9714b',
-    center: [37, 6],
+    center: [43, 5],
     minZoom: minZoom,
     zoom: zoomLevel,
     attributionControl: false
@@ -34,7 +34,8 @@ function displayMap() {
   //set initial indicator
   currentIndicator = {
     id: $('input[name="countryIndicators"]:checked').val(), 
-    name: $('input[name="countryIndicators"]:checked').parent().text()
+    name: $('input[name="countryIndicators"]:checked').attr('data-legend'), 
+    filter: $('input[name="countryIndicators"]:checked').attr('id')
   };
 
   //init element events
@@ -53,14 +54,14 @@ function displayMap() {
   //add map layers
   //country fills
   map.addSource('country-polygons', {
-    'url': 'mapbox://humdata.4p7qgaya',
+    'url': 'mapbox://humdata.dozf288z',
     'type': 'vector'
   });
   map.addLayer({
     'id': 'country-fills',
     'type': 'fill',
     'source': 'country-polygons',
-    'source-layer': 'hornafrica_polbnda_int_uncs-9e96cy',
+    'source-layer': 'access_polbnda_int_uncs-9mvk3r',
     'paint': {
       'fill-color': '#f1f1ee',
       'fill-opacity': 1
@@ -70,14 +71,14 @@ function displayMap() {
 
   //country boundaries
   map.addSource('country-lines', {
-    'url': 'mapbox://humdata.d6fpfzk8',
+    'url': 'mapbox://humdata.dd6zo5ht',
     'type': 'vector'
   });
   map.addLayer({
     'id': 'country-boundaries',
     'type': 'line',
     'source': 'country-lines',
-    'source-layer': 'hornafrica_polbndl_int_uncs-8iaq93',
+    'source-layer': 'access_polbndl_int_uncs-cja3rr',
     'paint': {
       'line-color': '#E0E0E0',
       'line-opacity': 1
@@ -88,14 +89,14 @@ function displayMap() {
 
   //subnational fills
   map.addSource('subnational-polygons', {
-    'url': 'mapbox://humdata.8j9ay0ba',
+    'url': 'mapbox://humdata.69v4osjh',
     'type': 'vector'
   });
   map.addLayer({
     'id': 'subnational-fills',
     'type': 'fill',
     'source': 'subnational-polygons',
-    'source-layer': 'hornafrica_polbnda_subnationa-2rkvd2',
+    'source-layer': 'access_polbnda_subnational-awnqao',
     'paint': {
       'fill-color': '#f1f1ee',
       'fill-opacity': 1,
@@ -106,14 +107,14 @@ function displayMap() {
 
   //subnational boundaries
   map.addSource('subnational-lines', {
-    'url': 'mapbox://humdata.8j9ay0ba',
+    'url': 'mapbox://humdata.69v4osjh',
     'type': 'vector'
   });
   map.addLayer({
     'id': 'subnational-boundaries',
     'type': 'line',
     'source': 'subnational-lines',
-    'source-layer': 'hornafrica_polbnda_subnationa-2rkvd2',
+    'source-layer': 'access_polbnda_subnational-awnqao',
     'paint': {
       'line-color': '#E0E0E0',
       'line-opacity': 1
@@ -125,16 +126,16 @@ function displayMap() {
 
   //subnational centroids
   map.addSource('subnational-centroids', {
-    'url': 'mapbox://humdata.cywtvjt9',
+    'url': 'mapbox://humdata.8fwurkgg',
     'type': 'vector'
   });
   map.addLayer({
     'id': 'subnational-labels',
     'type': 'symbol',
     'source': 'subnational-centroids',
-    'source-layer': 'hornafrica_polbndp_subnationa-a7lq5r',
+    'source-layer': 'access_polbndp_subnational-2u17fm',
     'layout': {
-      'text-field': ['get', 'ADM1_REF'],
+      'text-field': ['get', 'ADM_REF'],
       'text-font': ['DIN Pro Medium', 'Arial Unicode MS Bold'],
       'text-size': ['interpolate', ['linear'], ['zoom'], 0, 12, 4, 14],
       'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
@@ -150,44 +151,33 @@ function displayMap() {
   subnationalLabelLayer = 'subnational-labels';
   map.setLayoutProperty(subnationalLabelLayer, 'visibility', 'none');
 
-  mapFeatures = map.queryRenderedFeatures();
-
-  //load pop density rasters
-  var countryList = Object.keys(countryCodeList);
-  countryList.forEach(function(country_code) {
-    var id = country_code.toLowerCase();
-    var raster = countryCodeList[country_code];
-    if (raster!='') {
-      map.addSource(id+'-pop-tileset', {
-        type: 'raster',
-        url: 'mapbox://humdata.'+raster
-      });
-
-      map.addLayer(
-        {
-          id: id+'-popdensity',
-          type: 'raster',
-          source: {
-            type: 'raster',
-            tiles: ['https://api.mapbox.com/v4/humdata.'+raster+'/{z}/{x}/{y}.png?access_token='+mapboxgl.accessToken],
-          }
-        },
-        labelLayer
-      );
-      map.setLayoutProperty(id+'-popdensity', 'visibility', 'none');
+  //subnational markers
+  map.addLayer({
+    'id': 'subnational-markers',
+    'type': 'circle',
+    'source': 'subnational-centroids',
+    'source-layer': 'access_polbndp_subnational-2u17fm',
+    paint: {
+      'circle-color': '#888888',
+      'circle-stroke-color': '#CCCCCC'
     }
   });
+  subnationalMarkerLayer = 'subnational-markers';
+  map.setLayoutProperty(subnationalMarkerLayer, 'visibility', 'none');
+
+  mapFeatures = map.queryRenderedFeatures();
+
 
   //zoom into region
-  var offset = 100;
-  map.fitBounds(regionBoundaryData[0].bbox, {
-    padding: {top: offset, right: 0, bottom: offset, left: $('.key-figure-panel').outerWidth()},
-    linear: true
-  });
+  // var offset = 100;
+  // map.fitBounds(regionBoundaryData[0].bbox, {
+  //   padding: {top: offset, right: 0, bottom: offset, left: $('.key-figure-panel').outerWidth()},
+  //   linear: true
+  // });
 
 
   //init global and country layers
-  initGlobalLayer();
+  //initGlobalLayer();
   initCountryLayer();
 
   //deeplink to country if parameter exists
@@ -204,18 +194,21 @@ function displayMap() {
 function deepLinkView() {
   var location = window.location.search;
   //deep link to country view
-  if (location.indexOf('?c=')>-1) {
-    var countryCode = location.split('c=')[1].toUpperCase();
-    if (countryCodeList.hasOwnProperty(countryCode)) {    
-      $('.country-select').val(countryCode);
-      currentCountry.code = countryCode;
-      currentCountry.name = d3.select('.country-select option:checked').text();
+  // if (location.indexOf('?c=')>-1) {
+  //   var countryCode = location.split('c=')[1].toUpperCase();
+  //   if (countryCodeList.hasOwnProperty(countryCode)) {    
+  //     $('.country-select').val(countryCode);
+  //     currentCountry.code = countryCode;
+  //     currentCountry.name = d3.select('.country-select option:checked').text();
 
-      //find matched features and zoom to country
-      var selectedFeatures = matchMapFeatures(currentCountry.code);
-      selectCountry(selectedFeatures);
-    }
-  }
+  //     //find matched features and zoom to country
+  //     var selectedFeatures = matchMapFeatures(currentCountry.code);
+  //     selectCountry(selectedFeatures);
+  //   }
+  // }
+  var selectedFeatures = matchMapFeatures(currentCountry.code);
+  selectCountry(selectedFeatures);
+
   //deep link to specific layer in global view
   if (location.indexOf('?layer=')>-1) {
     var layer = location.split('layer=')[1];
@@ -240,7 +233,7 @@ function createEvents() {
   //map legend radio events
   $('input[type="radio"]').click(function(){
     var selected = $('input[name="countryIndicators"]:checked');
-    currentIndicator = {id: selected.val(), name: selected.parent().text()};
+    currentIndicator = {id: selected.val(), name: selected.attr('data-legend'), filter: selected.attr('id')};
     //selectLayer(selected);
     if (currentCountry.code=='') {
       updateGlobalLayer();
@@ -252,33 +245,33 @@ function createEvents() {
   });
 
   //chart view trendseries select event
-  d3.select('.trendseries-select').on('change',function(e) {
-    var selected = d3.select('.trendseries-select').node().value;
-    updateTimeseries(selected);
-    if (currentCountry.code!==undefined && selected!==undefined)
-      vizTrack(`chart ${currentCountry.code} view`, selected);
-  });
+  // d3.select('.trendseries-select').on('change',function(e) {
+  //   var selected = d3.select('.trendseries-select').node().value;
+  //   updateTimeseries(selected);
+  //   if (currentCountry.code!==undefined && selected!==undefined)
+  //     vizTrack(`chart ${currentCountry.code} view`, selected);
+  // });
 
 
   //country select event
-  d3.select('.country-select').on('change',function(e) {
-    currentCountry.code = d3.select('.country-select').node().value;
-    currentCountry.name = d3.select('.country-select option:checked').text();
-    if (currentCountry.code==='') {
-      resetMap();
-      updateGlobalLayer(currentCountry.code);
-    }
-    else {
-      //find matched features and zoom to country
-      var selectedFeatures = matchMapFeatures(currentCountry.code);
-      selectCountry(selectedFeatures);
-    }
-  });
+  // d3.select('.country-select').on('change',function(e) {
+  //   currentCountry.code = d3.select('.country-select').node().value;
+  //   currentCountry.name = d3.select('.country-select option:checked').text();
+  //   if (currentCountry.code==='') {
+  //     resetMap();
+  //     updateGlobalLayer(currentCountry.code);
+  //   }
+  //   else {
+  //     //find matched features and zoom to country
+  //     var selectedFeatures = matchMapFeatures(currentCountry.code);
+  //     selectCountry(selectedFeatures);
+  //   }
+  // });
 }
 
 
 function selectLayer(layer) {
-  currentIndicator = {id: layer.val(), name: layer.parent().text()};
+  currentIndicator = {id: layer.val(), name: layer.parent().text(), filter: layer.attr('id')};
   updateGlobalLayer();
   //vizTrack(`main ${currentCountry.code} view`, currentCountryIndicator.name);
 
@@ -290,28 +283,30 @@ function selectLayer(layer) {
 
 
 function selectCountry(features) {
-  let target = bbox.default(turfHelpers.featureCollection(features));
-  let padding = 40;
-  let mapPadding = (isMobile) ?
-    {
-        top: 0,
-        right: -100,
-        left: -200,
-        bottom: 0
-    } :
-    { 
-      top: $('.tab-menubar').outerHeight(),
-      right: $('.map-legend').outerWidth(),
-      bottom: padding,
-      left: $('.key-figure-panel').outerWidth() + padding,
-    };
-  map.fitBounds(target, {
-    offset: [0, 0] ,
-    padding: {top: mapPadding.top, right: mapPadding.right, bottom: mapPadding.bottom, left: mapPadding.left},
-    linear: true
-  });
+  updateCountryLayer();
+  // let target = bbox.default(turfHelpers.featureCollection(features));
+  // let padding = 40;
+  // let mapPadding = (isMobile) ?
+  //   {
+  //       top: 0,
+  //       right: -100,
+  //       left: -200,
+  //       bottom: 0
+  //   } :
+  //   { 
+  //     top: $('.tab-menubar').outerHeight(),
+  //     right: $('.map-legend').outerWidth(),
+  //     bottom: padding,
+  //     left: $('.key-figure-panel').outerWidth() + padding,
+  //   };
 
-  map.once('moveend', updateCountryLayer);
+  // map.fitBounds(target, {
+  //   offset: [0, 0] ,
+  //   padding: {top: mapPadding.top, right: mapPadding.right, bottom: mapPadding.bottom, left: mapPadding.left},
+  //   linear: true
+  // });
+
+  // map.once('moveend', updateCountryLayer);
 }
 
 
@@ -323,6 +318,7 @@ function resetMap() {
   map.setLayoutProperty(subnationalLayer, 'visibility', 'none');
   map.setLayoutProperty(subnationalBoundaryLayer, 'visibility', 'none');
   map.setLayoutProperty(subnationalLabelLayer, 'visibility', 'none');
+  map.setLayoutProperty(subnationalMarkerLayer, 'visibility', 'none');
 
   var offset = 100;
   map.fitBounds(regionBoundaryData[0].bbox, {

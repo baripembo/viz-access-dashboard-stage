@@ -56,26 +56,29 @@ function createMapTooltip(country_code, country_name, point) {
 }
 
 
-function createCountryMapTooltip(adm1_name, adm1_pcode, point) {
-  var adm1 = subnationalData.filter(function(c) {
-    if (c['#adm1+code']==adm1_pcode && c['#country+code']==currentCountry.code)
+function createCountryMapTooltip(adm2_name, adm2_pcode, point) {
+  var adm2 = subnationalData.filter(function(c) {
+    if (c['#adm2+code']==adm2_pcode) // && c['#country+code']==currentCountry.code
       return c;
   });
 
-  if (adm1[0]!=undefined) {
-    var val = adm1[0][currentIndicator.id];
+  if (adm2[0]!=undefined) {
+    var val = adm2[0]['#crisis'];//currentIndicator.id
     var label = currentIndicator.name;
 
     //format content for tooltip
-    if (val!=undefined && val!='' && !isNaN(val)) {
-      val = shortenNumFormat(val);
-    }
-    else {
-      val = 'No Data';
-    }
+    // if (val!=undefined && val!='' && !isNaN(val)) {
+    //   val = shortenNumFormat(val);
+    // }
+    // else {
+    //   val = 'No Data';
+    // }
 
     let content = '';
-    content = `<h2>${adm1_name}</h2>${label}:<div class="stat">${val}</div>`;
+    content = `<h2>${adm2_name}, Somalia</h2>${label}:<div class="stat">${val}</div>`;
+    content += `<div class="table-display">`;
+    content += `<div class="table-row"><div>People Targeted:</div><div>${numFormat(adm2[0]['#targeted'])}</div></div>`;
+    content += `</div>`;
 
     tooltip.setHTML(content);
     //if (!isMobile) setTooltipPosition(point)

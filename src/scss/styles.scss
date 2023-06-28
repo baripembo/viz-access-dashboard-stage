@@ -46,7 +46,7 @@ h2 {
 h3 {
   font-family: 'Gotham-Bold', sans-serif;
   font-size: 20px;
-  line-height: 22px;
+  line-height: 24px;
   font-weight: normal;
   margin: 0 0 20px;
 }
@@ -114,7 +114,7 @@ label {
 }
 
 .table-display {
-	margin: 5px 0 0;
+	margin: 15px 0 0;
 	.table-row {
 		align-items: center;
 		display: flex;
@@ -158,6 +158,7 @@ label {
   font-size: 29px;
   line-height: 35px;
   margin: 20px 0;
+	text-transform: capitalize;
 }
 
 ul {
@@ -279,18 +280,25 @@ a:visited {
 		border-bottom: 0;
 		margin: 20px 0;
 	}
-	label {
-		margin-top: 10px;
-	}
 	.legend-title {
 		display: block;
 		margin-top: 10px;
 	}
 	.legend-scale {
 		display: block;
+		.small.source {
+			margin-left: 0;
+		}
+	}
+	.targeted-scale {
+		margin-top: 10px;
+		.swatch {
+			fill: #888;
+			fill-opacity: 0.75;
+		}
 	}
 	.legend-container {
-		height: 92px;
+		height: 50px;
 		overflow: visible;
 		transform: translate(0px, 5px);
 		&.no-data {
@@ -322,20 +330,11 @@ a:visited {
 	.footnote {
 		margin-top: 15px;
 	}
-	&.population {
-		.legend-container {
-			height: 130px;
-		}
-		.legend-marker.hostilities,
-		.legend-marker.border-crossing {
-			display: flex;
-		}
-		.source-container.border-crossing {
-			display: block;
-		}
-	}		
 	.legendCells {
 		display: block;
+		.label {
+			text-transform: capitalize;
+		}
 	}
 	.legendCells-events .legendCells {
 		display: none;
@@ -348,17 +347,16 @@ a:visited {
 		font-family: 'Gotham Bold', sans-serif;
 		font-size: 12px;
 		line-height: 14px;
+		margin-top: 10px;
+		&.disabled {
+			color: #999;
+		}
+		&.nsag {
+			margin-top: 20px;
+		}
 	}
 	input {
 		margin: 0 6px 0 0;
-	}
-	svg {
-		width: 190px;
-		&.border-crossing-key,
-		&.refugee-count-key,
-		&.hostilities-key {
-			margin-top: 0;
-		}
 	}
 	.toggle-icon {
 		&:before {
@@ -489,7 +487,7 @@ a:visited {
 }
 
 .mapboxgl-ctrl-top-right {
-  top: 60px;
+  top: 16px;
   right: 16px;
 }
 
@@ -665,7 +663,7 @@ a:visited {
 }
 
 .country-select {
-	margin: 20px 0 0;
+	margin: 5px 0 40px;
 	width: 100%;
 }
 

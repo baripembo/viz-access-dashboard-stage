@@ -2,13 +2,13 @@
 /*** PANEL FUNCTIONS ***/
 /***********************/
 function initKeyFigures() {
-  var data = (currentCountry.code=='') ? regionalData : dataByCountry[currentCountry.code][0];
+  //var data = (currentCountry.code=='') ? regionalData : dataByCountry[currentCountry.code][0];
+  var data = (currentCountry.code=='') ? regionalData : subnationalData;
 
    //humanitarian impact figures
   var impactDiv = $('.key-figure-panel .impact .panel-inner');
   impactDiv.children().remove();  
-  createFigure(impactDiv, {className: 'population', title: 'Population', stat: shortenNumFormat(data['#population']), indicator: '#population'});
-  createFigure(impactDiv, {className: 'ipc', title: 'IPC Acute Food Insecurity', stat: shortenNumFormat(data['#affected+food+ipc+p3plus+num']), indicator: '#affected+food+ipc+p3plus+num'});
+  //createFigure(impactDiv, {className: 'population', title: 'Population', stat: shortenNumFormat(data['#population']), indicator: '#population'});
 }
 
 
@@ -19,8 +19,8 @@ function createFigure(div, obj) {
   if (obj.title != undefined) divInner.append('<h6 class="title">'+ obj.title +'</h6>');
   divInner.append('<p class="stat">'+ obj.stat +'</p>');
 
-  if (obj.indicator!='')
-    createSource(divInner, obj.indicator);
+  // if (obj.indicator!='')
+  //   createSource(divInner, obj.indicator);
 }
 
 
@@ -28,15 +28,15 @@ function createFigure(div, obj) {
 /*** SOURCE FUNCTIONS ***/
 /************************/
 function createSource(div, indicator) {
-  var sourceObj = getSource(indicator);
-  var date = (sourceObj['#date']==undefined) ? '' : dateFormat(new Date(sourceObj['#date']));
+  // var sourceObj = getSource(indicator);
+  // var date = (sourceObj['#date']==undefined) ? '' : dateFormat(new Date(sourceObj['#date']));
 
-  var sourceName = (sourceObj['#meta+source']==undefined) ? '' : sourceObj['#meta+source'];
-  var sourceURL = (sourceObj['#meta+url']==undefined) ? '#' : sourceObj['#meta+url'];
-  let sourceContent = `<p class='small source'><span class='date'>${date}</span> | <span class='source-name'>${sourceName}</span>`;
-  if (sourceURL!=='#') sourceContent += ` | <a href='${sourceURL}' class='dataURL' target='_blank' rel='noopener'>DATA</a>`;
-  sourceContent += `</p>`;
-  div.append(sourceContent);
+  // var sourceName = (sourceObj['#meta+source']==undefined) ? '' : sourceObj['#meta+source'];
+  // var sourceURL = (sourceObj['#meta+url']==undefined) ? '#' : sourceObj['#meta+url'];
+  // let sourceContent = `<p class='small source'><span class='date'>${date}</span> | <span class='source-name'>${sourceName}</span>`;
+  // if (sourceURL!=='#') sourceContent += ` | <a href='${sourceURL}' class='dataURL' target='_blank' rel='noopener'>DATA</a>`;
+  // sourceContent += `</p>`;
+  // div.append(sourceContent);
 }
 
 function updateSource(div, indicator) {

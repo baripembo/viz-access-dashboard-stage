@@ -14,22 +14,24 @@
     <!-- End Google Tag Manager -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="Description" content="">
-    <title>Horn of Africa Data Explorer</title>
+    <title>Access Constraints Dashboard</title>
     <meta name='viewport' content='width=device-width, initial-scale=1' />
-    <meta property="og:title" content="Horn of Africa Data Explorer">
+    <meta property="og:title" content="Access Constraints Dashboard">
     <meta property="og:type" content="website">
     <meta property="og:description" content="">
     <meta property="og:image" content="" />
     <link rel='icon' type='image/png' href='https://data.humdata.org/images/icons/hdx.ico' />
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css"/>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
+    <!-- <link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" /> -->
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
     <link href='css/styles.css' rel='stylesheet' />
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3-legend.susielu.com/d3-legend.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.11/c3.min.js"></script>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+    <!-- <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script> -->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script src="https://kit.fontawesome.com/39e5643f1a.js" crossorigin="anonymous"></script>
@@ -54,48 +56,30 @@
         <div class='content-left'></div>
         <div class='content-right'>
 
-          <div class="tab-menubar">
-            <div class="tab-button active" data-id="map-view">Map View</div>
-            <div class="tab-button" data-id="chart-view">Chart View</div>
-          </div>
           <div id='global-map'>
             <div class='map-legend'>
               <div class='toggle-icon'></div>
               <h4 class='collapsed-title'>MAP LEGEND</h4>
               <h4 class='indicator-title'>MAP DATA LAYER</h4>
               
-              <label>IPC Acute Food Insecurity<input checked='true' name='countryIndicators' type='radio' value='#affected+food+ipc+p3plus+num' id='ipc' data-legend='IPC Acute Food Insecurity (population in IPC Phase 3+)' data-layer='ipc_acute_food_insecurity'></label>
-              <div class="source-container ipc-source"></div>
+              <label>High/Extreme Access Constraint Levels<input checked='true' name='countryIndicators' type='radio' value='#crisis' id='high-extreme' data-legend='Access Constraint Levels' data-layer='high-extreme-access-constraints'></label>
+              <div class="source-container constraints-source"><p class="small source"><span class="date">Jun 2, 2023</span> | <span class="source-name">Source</span> | <a href="#" class="dataURL" target="_blank" rel="noopener">DATA</a></p></div>
 
-              <label>Population<input name='countryIndicators' type='radio' value='#population' id='population' data-legend='Population Density (people per sq km)' data-layer='population'></label>
-              <div class='source-container population-source'></div>
+              <label>Low/Moderate Access Constraint Levels<input name='countryIndicators' type='radio' value='#crisis' id='low-moderate' data-legend='Access Constraint Levels' data-layer='low-moderate-access-constraints'></label>
+              <div class='source-container constraints-source'><p class="small source"><span class="date">Jun 2, 2023</span> | <span class="source-name">Source</span> | <a href="#" class="dataURL" target="_blank" rel="noopener">DATA</a></p></div>
+
+              <label class='nsag disabled'>Non-state armed groups<input name='countryIndicators' type='checkbox' value='#nsag' id='nsag' data-legend='' data-layer='non-state-armed-groups' disabled></label>
+              <div class='source-container nsag-source'></div>
 
               <hr>
               <h4 class='indicator-title'>MAP LEGEND</h4>
               <h4 class='legend-title'></h4>
               <div class='legend-scale'></div>
 
-<!--               <div class='legend-marker hostilities'>
-                <div class='marker'><img src='assets/marker-hostility.svg' /></div>
-                <div>
-                  <label>Hostilities</label>
-                  <div class='source-container hostilities-source'></div>
-                </div>
-              </div> -->
-
             </div>
             <div class='legend-gradient'></div>
           </div>
           <div id="static-map"></div>
-
-          <div id='chart-view'>
-            <div class='source-container'></div>
-            <div class='trendseries-container'>
-              <select id='trendseriesSelect' class='trendseries-select'></select>
-              <div class='trendseries-title'></div>
-              <div class='trendseries-chart'></div>
-            </div>
-          </div>
 
           <div class='loader'>
             <div class="sp sp-circle"></div>
@@ -115,28 +99,19 @@
 
           <div class='panel-header'>
             <div class='panel-title'>
-              <h3>Horn of Africa Data Explorer</h3>
-            </div>
-
-            <h4>Download:</h4>
-            <div class='download-link'>
-              <a href='#' target='_blank' rel='noopener' class='download-daily'><span><b>REGIONAL HUMANITARIAN OVERVIEW</b><br><span class='today-date'></span> (pdf)</span><i class='humanitarianicons-Download'></i></a>
+              <h3>Access Constraint Levels in Areas with High Numbers of People Targeted for Assistance</h3>
             </div>
 
             <label for='countrySelect' class='visuallyhidden'>Select a country: </label>
             <select id='countrySelect' class='country-select'>
-              <option value=''>All Countries</option>
+              <option value=''>Somalia</option>
             </select>
           </div>
           <div class='panel-content'>
-            <div class='impact'>
-              <h5>Humanitarian Impact</h5>
-              <div class='panel-inner'></div>
-            </div>
-            <div class='funding'>
-              <h5>2022 Funding</h5>
-              <div class='panel-inner'></div>
-            </div>
+            <h6 class='title'>Total Number of People Targeted Living in Areas with High/Extreme Access Constraints</h6>
+            <p class='stat'>150M</p>
+
+            <h6 class='title'>Top 10 Areas with High/Extreme Access Constraint Levels by Number of People Targeted</h6>
           </div>
         </div>
 

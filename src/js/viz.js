@@ -3,8 +3,8 @@ var shortenNumFormat = d3.format('.2s');
 var percentFormat = d3.format('.1%');
 var dateFormat = d3.utcFormat("%b %d, %Y");
 var chartDateFormat = d3.utcFormat("%-m/%-d/%y");
-var colorRange = ['#F7DBD9', '#F6BDB9', '#F5A09A', '#F4827A', '#F2645A'];
-var populationColorRange = ['#FFE281','#FDB96D','#FA9059','#F27253','#E9554D'];
+var colorRange = ['#C25048','#F2645A'];
+var lowColorRange = ['#F7A29C','#FCE0DE'];
 var colorDefault = '#F2F2EF';
 var colorNoData = '#FFF';
 var regionBoundaryData, regionalData, nationalData, subnationalDataByCountry, dataByCountry, colorScale, viewportWidth, viewportHeight = '';
@@ -13,7 +13,7 @@ var mapLoaded = false;
 var dataLoaded = false;
 var viewInitialized = false;
 var isMobile = false;
-var zoomLevel = 4.9;
+var zoomLevel = 5.6;
 var minZoom = 2;
 
 var globalCountryList = [];
@@ -68,9 +68,10 @@ $( document ).ready(function() {
 
   function getData() {
     console.log('Loading data...')
+    let dataURL = 'https://proxy.hxlstandard.org/data.objects.json?dest=data_view&url=https://docs.google.com/spreadsheets/d/e/2PACX-1vTJp-5o-vhEXB9G5TBHmIj3TV80Grin3mF4tkE-czZPSkwj30xr6ygFGka2QYsT4Q/pub?gid%3D1938495719%26single%3Dtrue%26output%3Dcsv';
+    //'https://proxy.hxlstandard.org/data.objects.json?dest=data_view&url=https://docs.google.com/spreadsheets/d/e/2PACX-1vQYGRkpT63nUR5AUg9LVh0bUu1nlxUwL9UEGYtukZXiVHPMSd1SQpTEgYhmwxrjGA/pub?output%3Dcsv'
     Promise.all([
-      d3.json('https://raw.githubusercontent.com/OCHA-DAP/hdx-scraper-hornafrica-viz/main/all.json'),
-      d3.json('data/ocha-regions-bbox-hornafrica.geojson')
+      d3.json(dataURL)
     ]).then(function(data) {
       console.log('Data loaded');
       $('.loader span').text('Initializing map...');
@@ -78,34 +79,34 @@ $( document ).ready(function() {
 
       //parse data
       var allData = data[0];
-      regionalData = allData.regional_data[0];
-      nationalData = allData.national_data;
-      subnationalData = allData.subnational_data;
-      sourcesData = allData.sources_data;
-      regionBoundaryData = data[1].features; 
+      console.log(allData)
+      // regionalData = allData.regional_data[0];
+      // nationalData = allData.national_data;
+      subnationalData = data[0];
+      // sourcesData = allData.sources_data;
+      // regionBoundaryData = data[1].features; 
 
       //format data
-      // subnationalData.forEach(function(item) {
-      //   var pop = item['#population'];
-      //   if (item['#population']!=undefined) item['#population'] = parseInt(pop.replace(/,/g, ''), 10);
-      // });
-
-      //parse national data
-      nationalData.forEach(function(item) {
-        //keep global list of countries
-        globalCountryList.push({
-          'name': item['#country+name'],
-          'code': item['#country+code']
-        });
-        globalCountryList.sort(function(a,b) {
-          return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
-        });
+      subnationalData.forEach(function(item) {
+        item['#targeted'] = parseInt(item['#targeted'].replace(/,/g, ''), 10);
       });
 
-      //group national data by country -- drives country panel    
-      dataByCountry = d3.nest()
-        .key(function(d) { return d['#country+code']; })
-        .object(nationalData);
+      // //parse national data
+      // nationalData.forEach(function(item) {
+      //   //keep global list of countries
+      //   globalCountryList.push({
+      //     'name': item['#country+name'],
+      //     'code': item['#country+code']
+      //   });
+      //   globalCountryList.sort(function(a,b) {
+      //     return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+      //   });
+      // });
+
+      // //group national data by country -- drives country panel    
+      // dataByCountry = d3.nest()
+      //   .key(function(d) { return d['#country+code']; })
+      //   .object(nationalData);
 
 
       dataLoaded = true;
@@ -121,55 +122,45 @@ $( document ).ready(function() {
       deepLinkView();
 
     //create tab events
-    $('.tab-menubar .tab-button').on('click', function() {
-      $('.tab-button').removeClass('active');
-      $(this).addClass('active');
-      if ($(this).data('id')=='chart-view') {
-        $('#chart-view').show();
-      }
-      else {
-        $('#chart-view').hide();
-      }
-      vizTrack($(this).data('id'), currentIndicator.name);
-    });
+    // $('.tab-menubar .tab-button').on('click', function() {
+    //   $('.tab-button').removeClass('active');
+    //   $(this).addClass('active');
+    //   if ($(this).data('id')=='chart-view') {
+    //     $('#chart-view').show();
+    //   }
+    //   else {
+    //     $('#chart-view').hide();
+    //   }
+    //   vizTrack($(this).data('id'), currentIndicator.name);
+    // });
 
     //create country dropdown
-    $('.country-select').empty();
-    var countrySelect = d3.select('.country-select')
-      .selectAll('option')
-      .data(Object.entries(dataByCountry))
-      .enter().append('option')
-        .text(function(d) { return d[1][0]['#country+name']; })
-        .attr('value', function (d) { return d[1][0]['#country+code']; });
+    // $('.country-select').empty();
+    // var countrySelect = d3.select('.country-select')
+    //   .selectAll('option')
+    //   .data(Object.entries(dataByCountry))
+    //   .enter().append('option')
+    //     .text(function(d) { return d[1][0]['#country+name']; })
+    //     .attr('value', function (d) { return d[1][0]['#country+code']; });
     //insert default option    
-    $('.country-select').prepend('<option value="">All Countries</option>');
-    $('.country-select').val($('.country-select option:first').val());
-    currentCountry = {code: '', name:''}
+    // $('.country-select').prepend('<option value="">All Countries</option>');
+    // $('.country-select').val($('.country-select option:first').val());
+    currentCountry = {code: 'SOM', name:'Somalia'}
 
     //create chart view country select
-    $('.trendseries-select').append($('<option value="All">All Clusters</option>')); 
-    var trendseriesSelect = d3.select('.trendseries-select')
-      .selectAll('option')
-      .data(subnationalData)
-      .enter().append('option')
-        .text(function(d) {
-          let name = (d['#adm1+code']=='UA80') ? d['#adm1+name'] + ' (city)' : d['#adm1+name'];
-          return name; 
-        })
-        .attr('value', function (d) { return d['#adm1+code']; });
+    // $('.trendseries-select').append($('<option value="All">All Clusters</option>')); 
+    // var trendseriesSelect = d3.select('.trendseries-select')
+    //   .selectAll('option')
+    //   .data(subnationalData)
+    //   .enter().append('option')
+    //     .text(function(d) {
+    //       let name = (d['#adm1+code']=='UA80') ? d['#adm1+name'] + ' (city)' : d['#adm1+name'];
+    //       return name; 
+    //     })
+    //     .attr('value', function (d) { return d['#adm1+code']; });
 
     viewInitialized = true;
   }
-
-
-  // function initCountryView() {
-  //   $('.content').addClass('country-view');
-  //   $('.key-figure-panel').scrollTop(0);
-  //   $('#population').prop('checked', true);
-  //   currentCountryIndicator = {id: $('input[name="countryIndicators"]:checked').val(), name: $('input[name="countryIndicators"]:checked').parent().text()};
-
-  //   initKeyFigures();
-  // }
 
 
   function initTracking() {
