@@ -1,4 +1,4 @@
-# Horn of Africa Data Explorer
+# Access Level Constraints Dashboard
 
 ### Set up
 * Check out the repository
