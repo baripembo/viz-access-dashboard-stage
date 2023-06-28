@@ -600,7 +600,7 @@ function updateCountryLayer() {
   //update legend scale
   var currenColorRange = (currentIndicator.filter).includes('high') ? colorRange : lowColorRange;
   var countryColorScale = d3.scaleOrdinal().domain([filterVals[filterVals.length-1], filterVals[0]]).range(currenColorRange)
-  updateMapLegend(countryColorScale);
+  updateCountryLegend(countryColorScale);
 
   //update mouse event
   map.on('mousemove', subnationalLayer, onMouseMove);         
@@ -685,7 +685,7 @@ function createCountryLegend(scale) {
     .call(legend);
 
   //people targeted
-  $('.map-legend .legend-scale').append('<h4 class="legend-title">Number of People Targeted</h4>');
+  $('.map-legend .legend-scale').append('<h4>Number of People Targeted</h4>');
   $('.map-legend .legend-scale').append('<div class="source-container targeted-source"><p class="small source"><span class="date">Jun 2, 2023</span> | <span class="source-name">Source</span> | <a href="#" class="dataURL" target="_blank" rel="noopener">DATA</a></p></div>');
   //createSource($('.map-legend'), '#targeted');
 
@@ -722,10 +722,6 @@ function createCountryLegend(scale) {
 
 
 function updateCountryLegend(scale) {
-  //set legend title
-  // let legendTitle = $('input[name="countryIndicators"]:checked').attr('data-legend');
-  // $('.map-legend.country .legend-title').html(legendTitle);
-
   //update legend
   var legend = d3.legendColor()
     .cells(colorRange.length)
@@ -735,9 +731,9 @@ function updateCountryLegend(scale) {
   g.call(legend);
 
   //update marker legend
-  var markerScale = getMarkerScale();
+  var test = getMarkerScale();
   var markerLegend = d3.legendSize()
-    .scale(markerScale)
+    .scale(test)
     .shape('circle')
     .shapePadding(40)
     .labelFormat(numFormat)
@@ -745,9 +741,9 @@ function updateCountryLegend(scale) {
     .cells(2)
     .orient('horizontal');
 
-
-  var markersvg = d3.select('.map-legend .marker-size');
-  markersvg.call(markerLegend);
+  var markerSize = d3.select('.marker-size');
+  markerSize.select('.legendCells').remove();
+  markerSize.call(markerLegend);
 }
 
 
@@ -765,13 +761,6 @@ function getFilterVals() {
 }
 
 function getMarkerScale() {
-  // var maxTarget = d3.max(subnationalData, function(d) {
-  //   return +d['#targeted']; 
-  // });
-  // var scale = d3.scaleSqrt()
-  //   .domain([1, maxTarget])
-  //   .range([2, 20]);
-
   var filterVals = getFilterVals();
 
   //filter data
@@ -782,9 +771,7 @@ function getMarkerScale() {
   //marker scale
   var maxTarget = d3.max(filteredData, (d) => +d['#targeted']);
   var minTarget = d3.min(filteredData, (d) => +d['#targeted']);
-  console.log(minTarget, maxTarget)
   var scale = d3.scaleSqrt().domain([minTarget, maxTarget]).range([4, 20]);
-
   return scale;
 }
 
