@@ -157,7 +157,7 @@ label {
   font-family: 'Gotham-Light', sans-serif;
   font-size: 29px;
   line-height: 35px;
-  margin: 20px 0;
+  margin: 20px 0 0;
 	text-transform: capitalize;
 }
 
@@ -168,6 +168,12 @@ ul {
 	&.horizontal {
 		display: flex;
 	}
+}
+
+hr {
+	border: 1px solid #E0E0E0;
+	border-bottom: 0;
+	margin: 20px 0;
 }
 
 a,
@@ -275,16 +281,12 @@ a:visited {
 	width: 215px;
 	z-index: 3;
 	height: auto;
-	hr {
-		border: 1px solid #E0E0E0;
-		border-bottom: 0;
-		margin: 20px 0;
-	}
 	.legend-title {
 		display: block;
 		margin-top: 10px;
 	}
-	.legend-scale {
+	.targeted-source,
+	.scale-source {
 		display: block;
 		.small.source {
 			margin-left: 0;
@@ -299,6 +301,7 @@ a:visited {
 	}
 	.legend-container {
 		height: 50px;
+		margin-top: 5px;
 		overflow: visible;
 		transform: translate(0px, 5px);
 		&.no-data {
@@ -667,6 +670,16 @@ a:visited {
 	width: 100%;
 }
 
+.ranking-chart {
+	margin-top: 10px;
+	.tick text {
+		font-size: 13px;
+	}
+}
+
+.ranking-title {
+	margin-top: 30px;
+}
 
 .c3-title,
 .chart-title {

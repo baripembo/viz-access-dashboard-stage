@@ -33,17 +33,12 @@ function updateCountryLayer() {
   initKeyFigures();
 
   //update legend scale
-  var currenColorRange = (currentIndicator.filter).includes('high') ? colorRange : lowColorRange;
-  var countryColorScale = d3.scaleOrdinal().domain([filterVals[filterVals.length-1], filterVals[0]]).range(currenColorRange)
+  var currentColorRange = (currentIndicator.filter).includes('high') ? colorRange : lowColorRange;
+  var countryColorScale = d3.scaleOrdinal().domain([filterVals[filterVals.length-1], filterVals[0]]).range(currentColorRange)
   updateCountryLegend(countryColorScale);
 
   //update mouse event
-  map.on('mousemove', subnationalLayer, onMouseMove);         
-
-  //filter data
-  let filteredData = subnationalData.filter((d) => {
-    return (d[currentIndicator.id]==filterVals[1] || d[currentIndicator.id]==filterVals[0]);
-  });
+  map.on('mousemove', subnationalLayer, onMouseMove);
 
   //marker scale
   var markerScale = getMarkerScale();
@@ -107,6 +102,10 @@ function createCountryLegend(scale) {
   // createSource($('.map-legend.country .ipc-source'), '#affected+food+ipc+p3plus+num');
   // createSource($('.map-legend.country .population-source'), '#population');
 
+  let legendTitle = $('input[name="countryIndicators"]:checked').attr('data-legend');
+  $('.map-legend .legend-title').html(legendTitle);
+
+
   var legend = d3.legendColor()
     .cells(colorRange.length)
     .scale(scale);
@@ -129,7 +128,7 @@ function createCountryLegend(scale) {
     .attr('height', '55px')
     .attr('class', 'targeted-scale');
   markersvg.append('g')
-    .attr("transform", "translate(5, 10)")
+    .attr("transform", "translate(15, 10)")
     .attr('class', 'marker-size');
 
   var markerScale = getMarkerScale();

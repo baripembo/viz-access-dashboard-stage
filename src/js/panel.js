@@ -2,13 +2,16 @@
 /*** PANEL FUNCTIONS ***/
 /***********************/
 function initKeyFigures() {
-  //var data = (currentCountry.code=='') ? regionalData : dataByCountry[currentCountry.code][0];
-  var data = (currentCountry.code=='') ? regionalData : subnationalData;
+  // //var data = (currentCountry.code=='') ? regionalData : dataByCountry[currentCountry.code][0];
+  // var data = (currentCountry.code=='') ? regionalData : subnationalData;
 
-   //humanitarian impact figures
-  var impactDiv = $('.key-figure-panel .impact .panel-inner');
-  impactDiv.children().remove();  
-  //createFigure(impactDiv, {className: 'population', title: 'Population', stat: shortenNumFormat(data['#population']), indicator: '#population'});
+  //  //humanitarian impact figures
+  // var impactDiv = $('.key-figure-panel .impact .panel-inner');
+  // impactDiv.children().remove();  
+  // createFigure(impactDiv, {className: 'population', title: 'Population', stat: shortenNumFormat(data['#population']), indicator: '#population'});
+
+    //ranking chart
+  createRankingChart();
 }
 
 

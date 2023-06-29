@@ -13,7 +13,7 @@ var mapLoaded = false;
 var dataLoaded = false;
 var viewInitialized = false;
 var isMobile = false;
-var zoomLevel = 5.6;
+var zoomLevel = 5.3;
 var minZoom = 2;
 
 var globalCountryList = [];
