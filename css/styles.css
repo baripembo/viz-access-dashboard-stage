@@ -1256,7 +1256,7 @@ label.label-small {
   font-family: 'Gotham-Light', sans-serif;
   font-size: 29px;
   line-height: 35px;
-  margin: 20px 0;
+  margin: 20px 0 0;
   text-transform: capitalize; }
 
 ul {
@@ -1265,6 +1265,11 @@ ul {
   padding: 0; }
   ul.horizontal {
     display: flex; }
+
+hr {
+  border: 1px solid #E0E0E0;
+  border-bottom: 0;
+  margin: 20px 0; }
 
 a,
 a:visited {
@@ -1356,16 +1361,14 @@ a:visited {
   width: 215px;
   z-index: 3;
   height: auto; }
-  .map-legend hr {
-    border: 1px solid #E0E0E0;
-    border-bottom: 0;
-    margin: 20px 0; }
   .map-legend .legend-title {
     display: block;
     margin-top: 10px; }
-  .map-legend .legend-scale {
+  .map-legend .targeted-source,
+  .map-legend .scale-source {
     display: block; }
-    .map-legend .legend-scale .small.source {
+    .map-legend .targeted-source .small.source,
+    .map-legend .scale-source .small.source {
       margin-left: 0; }
   .map-legend .targeted-scale {
     margin-top: 10px; }
@@ -1374,6 +1377,7 @@ a:visited {
       fill-opacity: 0.75; }
   .map-legend .legend-container {
     height: 50px;
+    margin-top: 5px;
     overflow: visible;
     transform: translate(0px, 5px); }
     .map-legend .legend-container.no-data {
@@ -1658,6 +1662,14 @@ a:visited {
 .country-select {
   margin: 5px 0 40px;
   width: 100%; }
+
+.ranking-chart {
+  margin-top: 10px; }
+  .ranking-chart .tick text {
+    font-size: 13px; }
+
+.ranking-title {
+  margin-top: 30px; }
 
 .c3-title,
 .chart-title {
