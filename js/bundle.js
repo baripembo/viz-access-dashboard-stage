@@ -1631,7 +1631,7 @@ $( document ).ready(function() {
     //'https://proxy.hxlstandard.org/data.objects.json?dest=data_view&url=https://docs.google.com/spreadsheets/d/e/2PACX-1vQYGRkpT63nUR5AUg9LVh0bUu1nlxUwL9UEGYtukZXiVHPMSd1SQpTEgYhmwxrjGA/pub?output%3Dcsv'
     Promise.all([
       d3.json(dataURL),
-      d3.csv('https://unitednations.sharepoint.com/:x:/r/sites/test728/_layouts/15/Doc.aspx?sourcedoc=%7B6F9458F5-F898-4982-979C-C838ACAD1A86%7D&file=test%20private%20data.xlsx&action=default&mobileredirect=true')
+      //d3.csv('https://unitednations.sharepoint.com/:x:/r/sites/test728/_layouts/15/Doc.aspx?sourcedoc=%7B6F9458F5-F898-4982-979C-C838ACAD1A86%7D&file=test%20private%20data.xlsx&action=default&mobileredirect=true')
     ]).then(function(data) {
       console.log('Data loaded');
       $('.loader span').text('Initializing map...');
@@ -1639,7 +1639,7 @@ $( document ).ready(function() {
 
       //parse data
       var allData = data[0];
-      console.log('xls',data[1])
+      //console.log('xls',data[1])
       // regionalData = allData.regional_data[0];
       // nationalData = allData.national_data;
       subnationalData = data[0];
